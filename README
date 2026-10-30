@@ -3,3 +3,107 @@
 報名表
 新增活動
 報名清單
+
+一、Use Case
+
+基本款不做登入，用兩個角色區分使用情境：
+
+角色	Use Case	對應投影片需求
+主辦者	UC1 新增活動	新增新的活動
+參加者	UC2 瀏覽可報名活動清單	列出可報名的活動清單
+參加者	UC3 報名活動（包含：開啟報名表、填寫姓名與電話、送出）	針對活動點擊報名
+主辦者	UC4 查看某活動的報名清單	查看活動的報名清單
+
+UC3 的主要流程：參加者在清單點「報名」，系統顯示該活動的報名表，參加者填寫姓名與連絡電話後送出。系統驗證欄位，寫入資料庫，再顯示「報名成功」。例外流程有三種：欄位空白或電話格式錯誤、活動已截止或額滿、同一支電話重複報名。
+
+二、系統架構
+瀏覽器（HTML / CSS / JS）
+      │  fetch（JSON）
+      ▼
+FastAPI（路由 → Pydantic 驗證 → SQLAlchemy）
+      │
+      ▼
+SQLite（event.db）
+
+前端頁面由 FastAPI 的 StaticFiles 一起提供，前後端同源，不用處理 CORS，三個人在本機只要跑一個指令就能開發。
+
+三、資料庫設計
+
+兩張表，關係為一對多（一個活動有多筆報名）。
+
+activities（活動）
+
+欄位	型別	說明
+id	INTEGER PK	自動遞增
+title	TEXT	活動名稱（必填）
+description	TEXT	活動說明
+location	TEXT	地點
+event_time	DATETIME	活動時間
+deadline	DATETIME	報名截止時間
+capacity	INTEGER	名額上限（可為空，表示不限）
+created_at	DATETIME	建立時間
+
+registrations（報名）
+
+欄位	型別	說明
+id	INTEGER PK	自動遞增
+activity_id	INTEGER FK	對應 activities.id
+name	TEXT	姓名（必填）
+phone	TEXT	連絡電話（必填）
+created_at	DATETIME	報名時間
+
+這張表加上 UNIQUE(activity_id, phone)，防止同一活動用同一支電話重複報名。
+
+「可報名」的定義是：現在時間早於截止時間，而且報名人數小於名額上限，或名額上限為空。
+
+四、API 設計
+方法	路徑	功能	Use Case
+POST	/api/activities	新增活動	UC1
+GET	/api/activities?open=true	列出可報名活動（含目前報名人數）	UC2
+GET	/api/activities/{id}	取得單一活動，供報名表顯示	UC3
+POST	/api/activities/{id}/registrations	送出報名	UC3
+GET	/api/activities/{id}/registrations	查看報名清單	UC4
+
+錯誤回應的狀態碼：找不到活動回 404，已截止或已額滿回 400，重複報名回 409，欄位格式錯誤時由 FastAPI 自動回 422。
+
+五、畫面規劃
+頁面	檔案	內容
+活動清單（首頁）	index.html	活動卡片，顯示名稱、時間、剩餘名額，以及「報名」和「看報名清單」兩個按鈕；上方有「新增活動」入口
+新增活動	create.html	活動表單，送出後回到首頁
+報名表	register.html?id=1	上方顯示活動資訊，下方是姓名、電話表單；送出後顯示成功或錯誤訊息
+報名清單	registrations.html?id=1	表格列出姓名、電話、報名時間，以及總人數
+六、專案目錄結構
+event-signup/
+├── backend/
+│   └── app/
+│       ├── main.py          # 建立 app、掛載路由與靜態檔
+│       ├── database.py      # DB 連線、Session
+│       ├── models.py        # SQLAlchemy 資料表
+│       ├── schemas.py       # Pydantic 輸入／輸出格式
+│       └── routers/
+│           ├── activities.py
+│           └── registrations.py
+├── frontend/
+│   ├── index.html
+│   ├── create.html
+│   ├── register.html
+│   ├── registrations.html
+│   ├── css/style.css
+│   └── js/api.js            # 統一放 fetch 呼叫
+├── docs/                    # Use case 圖、ER 圖、API 文件
+├── requirements.txt
+├── .gitignore               # 排除 event.db、__pycache__、venv
+└── README.md                # 安裝與啟動方式
+
+這個結構前端、後端、文件的邊界很清楚，之後分工時三個人比較不會改到同一個檔案，可以減少 Git 衝突。
+
+七、需要你確認的決策
+
+下面是我預設的選擇，請告訴我要不要調整：
+
+前端：用純 HTML 加 JS 透過 fetch 呼叫 API。另一個選項是 Jinja2 模板，伺服器直接渲染頁面，比較簡單，但前後端會綁在一起，分工比較難切開。
+資料庫：用 SQLite，不用另外安裝。如果課程要求 MySQL 或 PostgreSQL，之後只要改 database.py 的連線字串。
+截止時間與名額：投影片沒有提到，是我為了定義「可報名」而加的。如果要更「廢墟」，可以拿掉，改成所有活動都可報名。
+權限：不做登入，任何人都能新增活動、看報名清單。這樣電話會公開顯示，作為作業可以接受，但可以在文件裡註明這是已知限制。
+
+另外想確認一下：「和兩人協作」是指你加上另外兩位，總共三人，對嗎？確認架構後，我再依照人數提出分工與 GitHub 流程（分支策略、PR 審查、Issue 對應 Use Case）。
