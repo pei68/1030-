@@ -1,3 +1,10 @@
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python -m backend.seed                 # 選用，建立 3 筆範例活動
+uvicorn backend.app.main:app --reload
+
+
 # 廢墟版活動報名平台（基本款）
 
 FastAPI + SQLite + HTML/CSS/JS 的活動報名系統。
