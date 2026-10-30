@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>報名清單｜活動報名平台</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header><div class="inner"><a class="site-name" href="index.html">活動報名平台</a><a class="button" href="create.html">新增活動</a></div></header>
+  <main>
+    <h1>報名清單：<span id="activity-title"></span></h1>
+    <p id="registration-count"></p>
+    <div id="message" class="message" hidden></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>姓名</th><th>連絡電話</th><th>報名時間</th></tr></thead>
+        <tbody id="registration-rows"></tbody>
+      </table>
+    </div>
+    <p><a href="index.html">回活動清單</a></p>
+  </main>
+  <script src="js/api.js"></script>
+  <script src="js/registrations.js"></script>
+</body>
+</html>
