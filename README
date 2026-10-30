@@ -1,8 +1,24 @@
-# Web:
-活動清單
-報名表
-新增活動
-報名清單
+# 1. 建立並啟用虛擬環境
+python -m venv venv
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # macOS / Linux
+
+# 2. 安裝套件
+pip install -r requirements.txt
+
+# 3.（選用）建立範例資料
+python -m backend.seed
+
+# 4. 啟動伺服器（在專案根目錄執行）
+uvicorn backend.app.main:app --reload
+```
+
+啟動後開啟：
+
+- 網站：http://127.0.0.1:8000
+- API 文件（可直接測試 API）：http://127.0.0.1:8000/docs
+
+想清空資料，關閉伺服器後刪除根目錄的 `event.db`，重新啟動即可。
 
 一、Use Case
 
