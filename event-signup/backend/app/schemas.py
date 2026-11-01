@@ -25,6 +25,10 @@ class ActivityCreate(BaseModel):
         return self
 
 
+class ActivityPinUpdate(BaseModel):
+    is_pinned: bool
+
+
 class ActivityOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -38,6 +42,7 @@ class ActivityOut(BaseModel):
     created_at: datetime
     registered_count: int
     is_open: bool
+    is_pinned: bool
 
 
 # ---------- 報名 ----------

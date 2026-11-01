@@ -1,4 +1,4 @@
-/* 溫馨奶油色主題：四個頁面共用，不需載入外部字型。 */
+/* 溫馨奶油色主題：四個頁面共用。 */
 :root {
   color-scheme: light;
   --bg: #faf5ed;
@@ -104,3 +104,24 @@ tbody tr:hover { background: #fcf6ee; }
 @media (prefers-reduced-motion: reduce) {
   .button, button { transition: none; }
 }
+
+/* 報名清單：醒目顯示目前報名人數。 */
+#registration-count:not(:empty) {
+  margin: 0 0 24px;
+  padding: 18px 22px;
+  border: 1px solid #dfc39a;
+  border-left: 6px solid var(--primary);
+  border-radius: 14px;
+  background: #f7e8ce;
+  color: #633b26;
+  font-size: clamp(1.25rem, 4vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* 活動釘選 */
+.pin-option { display: flex; align-items: center; gap: 8px; margin: 0 0 18px; color: var(--primary); font-weight: 700; cursor: pointer; }
+.pin-option input { flex: 0 0 auto; width: 18px; height: 18px; }
+.activity.pinned { border-color: #c49a78; border-top-color: var(--primary); background: #fff8eb; }

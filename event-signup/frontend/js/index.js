@@ -11,9 +11,9 @@ function quotaText(a) {
 
 function renderActivity(a) {
   return `
-    <article class="activity">
+    <article class="activity${a.is_pinned ? " pinned" : ""}">
       <div class="activity-head">
-        <h2>${escapeHtml(a.title)}</h2>
+        <h2>${a.is_pinned ? '<span role="img" aria-label="已釘選" title="已釘選">📌</span> ' : ""}${escapeHtml(a.title)}</h2>
         <span class="status ${a.is_open ? "open" : "closed"}">${a.is_open ? "可報名" : "已截止或額滿"}</span>
       </div>
       <p class="desc">${escapeHtml(a.description)}</p>
@@ -34,6 +34,7 @@ async function loadActivities() {
   messageEl.hidden = true;
   try {
     const activities = await API.listActivities(openOnlyEl.checked);
+    activities.sort((a, b) => Number(b.is_pinned) - Number(a.is_pinned) || Number(b.is_open) - Number(a.is_open));
     listEl.innerHTML = activities.length
       ? activities.map(renderActivity).join("")
       : `<p class="empty">目前沒有活動。<a href="create.html">新增一個活動</a></p>`;

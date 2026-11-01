@@ -16,6 +16,11 @@ const API = {
   listActivities(openOnly = true) {
     return this.request(`/api/activities?open=${openOnly}`);
   },
+  setActivityPin(id, isPinned) {
+    return this.request(`/api/activities/${id}/pin`, {
+      method: "PATCH", body: JSON.stringify({ is_pinned: isPinned }),
+    });
+  },
   getActivity(id) {
     return this.request(`/api/activities/${id}`);
   },
