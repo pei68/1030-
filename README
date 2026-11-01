@@ -1,134 +1,117 @@
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python -m backend.seed                 # 選用，建立 3 筆範例活動
-uvicorn backend.app.main:app --reload
+# 10/30 駭客松-廢墟版活動報名平台
 
-# 1. 建立並啟用虛擬環境
-python -m venv venv
-venv\Scripts\activate          # Windows
-# source venv/bin/activate     # macOS / Linux
+以 FastAPI、SQLite 與原生 HTML／CSS／JavaScript 製作的活動報名系統，提供新增活動、瀏覽活動、線上報名、查看報名清單與釘選活動功能。介面採用奶油白背景與棕色配色。
 
-# 2. 安裝套件
-pip install -r requirements.txt
+## 組員
 
-# 3.（選用）建立範例資料
-python -m backend.seed
+### ⭐ 成員 1
 
-# SQLAlchemy
-uv pip install --python .\venv\Scripts\python.exe "SQLAlchemy>=2.0.55,<2.1"
+- **學號：** `113213077`
+- **姓名：** 温佳哲
+- **GitHub 帳號：** [@jay350451119-star](https://github.com/jay350451119-star)
+- **工作分配：** 網頁風格
 
-# 4. 啟動伺服器（在專案根目錄執行）
+### ⭐ 成員 2
+
+- **學號：** `112213022`
+- **姓名：** 王子豪
+- **GitHub 帳號：** [@Lenz0501](https://github.com/Lenz0501)
+- **工作分配：** 細節修飾
+
+### ⭐ 成員 3
+
+- **學號：** `112213068`
+- **姓名：** 莊佩諺
+- **GitHub 帳號：** [@pei68](https://github.com/pei68)
+- **工作分配：** 網頁風格
+  
+## 功能介紹
+
+| 使用情境 | 功能 |
+|---|---|
+| 主辦者建立活動 | 填寫名稱、說明、地點、活動時間、報名截止時間與名額上限 |
+| 參加者瀏覽活動 | 查看活動資訊、人數與報名狀態，並可篩選可報名活動 |
+| 參加者報名 | 填寫姓名與連絡電話，送出後顯示成功或錯誤訊息 |
+| 主辦者查看名單 | 查看姓名、連絡電話、報名時間與報名總人數 |
+| 釘選重要活動 | 在報名清單頁勾選釘選，首頁會顯示 📌 並優先置頂 |
+
+## 畫面展示
+
+### 1. 活動清單首頁
+
+顯示活動卡片、可報名狀態、報名人數與篩選選項。
+
+<img src="assets/home.png" alt="Home" width="800">
+
+### 2. 新增活動
+
+填寫活動資料、報名截止時間與名額上限。
+
+<img src="assets\add_activities.png" alt="Add Activities" width="800">
+
+### 3. 活動報名表
+
+顯示活動資訊，讓參加者填寫姓名與連絡電話。
+
+<img src="assets\registration_form.png" alt="Registration Form" width="800">
+
+### 4. 報名清單
+
+以表格呈現報名資料，並顯示報名人數。
+
+<img src="assets\registration_list.png" alt="Registration List" width="800">
+
+## 環境需求
+
+- Python 3.10 以上。
+- 支援 JavaScript 的瀏覽器，例如 Chrome 或 Edge。
+- 首次安裝套件時需要網路連線。
+
+目前 `requirements.txt` 固定的主要套件版本：FastAPI 0.115.6、Uvicorn 0.32.1、SQLAlchemy 2.0.36。
+
+## 安裝與啟動（Windows PowerShell）
+
+### 1. Clone 專案並進入程式目錄
+
+```powershell
+git clone https://github.com/pei68/1030-.git
+cd .\1030-\event-signup
+```
+
+### 2. 建立虛擬環境並安裝套件
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+以下直接使用虛擬環境內的 Python，不必另外啟用環境。若已建立 `.venv`，可略過建立步驟。
+
+### 3. 啟動網站
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --reload
+```
+
+如果已啟用正確的虛擬環境，也可以沿用：
+
+```powershell
 uvicorn backend.app.main:app --reload
 ```
 
 啟動後開啟：
 
-- 網站：http://127.0.0.1:8000
-- API 文件（可直接測試 API）：http://127.0.0.1:8000/docs
+- [活動報名平台](http://127.0.0.1:8000/)
+- [互動式 API 文件](http://127.0.0.1:8000/docs)
 
-想清空資料，關閉伺服器後刪除根目錄的 `event.db`，重新啟動即可。
+在終端機按 `Ctrl + C` 可停止伺服器。`--reload` 用於開發時自動重新載入後端程式。
 
-一、Use Case
+### 4. 建立範例資料（選用）
 
-基本款不做登入，用兩個角色區分使用情境：
+首次啟動後，可以在另一個終端機進入相同目錄並執行：
 
-角色	Use Case	對應投影片需求
-主辦者	UC1 新增活動	新增新的活動
-參加者	UC2 瀏覽可報名活動清單	列出可報名的活動清單
-參加者	UC3 報名活動（包含：開啟報名表、填寫姓名與電話、送出）	針對活動點擊報名
-主辦者	UC4 查看某活動的報名清單	查看活動的報名清單
+```powershell
+.\.venv\Scripts\python.exe -m backend.seed
+```
 
-UC3 的主要流程：參加者在清單點「報名」，系統顯示該活動的報名表，參加者填寫姓名與連絡電話後送出。系統驗證欄位，寫入資料庫，再顯示「報名成功」。例外流程有三種：欄位空白或電話格式錯誤、活動已截止或額滿、同一支電話重複報名。
-
-二、系統架構
-瀏覽器（HTML / CSS / JS）
-      │  fetch（JSON）
-      ▼
-FastAPI（路由 → Pydantic 驗證 → SQLAlchemy）
-      │
-      ▼
-SQLite（event.db）
-
-前端頁面由 FastAPI 的 StaticFiles 一起提供，前後端同源，不用處理 CORS，三個人在本機只要跑一個指令就能開發。
-
-三、資料庫設計
-
-兩張表，關係為一對多（一個活動有多筆報名）。
-
-activities（活動）
-
-欄位	型別	說明
-id	INTEGER PK	自動遞增
-title	TEXT	活動名稱（必填）
-description	TEXT	活動說明
-location	TEXT	地點
-event_time	DATETIME	活動時間
-deadline	DATETIME	報名截止時間
-capacity	INTEGER	名額上限（可為空，表示不限）
-created_at	DATETIME	建立時間
-
-registrations（報名）
-
-欄位	型別	說明
-id	INTEGER PK	自動遞增
-activity_id	INTEGER FK	對應 activities.id
-name	TEXT	姓名（必填）
-phone	TEXT	連絡電話（必填）
-created_at	DATETIME	報名時間
-
-這張表加上 UNIQUE(activity_id, phone)，防止同一活動用同一支電話重複報名。
-
-「可報名」的定義是：現在時間早於截止時間，而且報名人數小於名額上限，或名額上限為空。
-
-四、API 設計
-方法	路徑	功能	Use Case
-POST	/api/activities	新增活動	UC1
-GET	/api/activities?open=true	列出可報名活動（含目前報名人數）	UC2
-GET	/api/activities/{id}	取得單一活動，供報名表顯示	UC3
-POST	/api/activities/{id}/registrations	送出報名	UC3
-GET	/api/activities/{id}/registrations	查看報名清單	UC4
-
-錯誤回應的狀態碼：找不到活動回 404，已截止或已額滿回 400，重複報名回 409，欄位格式錯誤時由 FastAPI 自動回 422。
-
-五、畫面規劃
-頁面	檔案	內容
-活動清單（首頁）	index.html	活動卡片，顯示名稱、時間、剩餘名額，以及「報名」和「看報名清單」兩個按鈕；上方有「新增活動」入口
-新增活動	create.html	活動表單，送出後回到首頁
-報名表	register.html?id=1	上方顯示活動資訊，下方是姓名、電話表單；送出後顯示成功或錯誤訊息
-報名清單	registrations.html?id=1	表格列出姓名、電話、報名時間，以及總人數
-六、專案目錄結構
-event-signup/
-├── backend/
-│   └── app/
-│       ├── main.py          # 建立 app、掛載路由與靜態檔
-│       ├── database.py      # DB 連線、Session
-│       ├── models.py        # SQLAlchemy 資料表
-│       ├── schemas.py       # Pydantic 輸入／輸出格式
-│       └── routers/
-│           ├── activities.py
-│           └── registrations.py
-├── frontend/
-│   ├── index.html
-│   ├── create.html
-│   ├── register.html
-│   ├── registrations.html
-│   ├── css/style.css
-│   └── js/api.js            # 統一放 fetch 呼叫
-├── docs/                    # Use case 圖、ER 圖、API 文件
-├── requirements.txt
-├── .gitignore               # 排除 event.db、__pycache__、venv
-└── README.md                # 安裝與啟動方式
-
-這個結構前端、後端、文件的邊界很清楚，之後分工時三個人比較不會改到同一個檔案，可以減少 Git 衝突。
-
-七、需要你確認的決策
-
-下面是我預設的選擇，請告訴我要不要調整：
-
-前端：用純 HTML 加 JS 透過 fetch 呼叫 API。另一個選項是 Jinja2 模板，伺服器直接渲染頁面，比較簡單，但前後端會綁在一起，分工比較難切開。
-資料庫：用 SQLite，不用另外安裝。如果課程要求 MySQL 或 PostgreSQL，之後只要改 database.py 的連線字串。
-截止時間與名額：投影片沒有提到，是我為了定義「可報名」而加的。如果要更「廢墟」，可以拿掉，改成所有活動都可報名。
-權限：不做登入，任何人都能新增活動、看報名清單。這樣電話會公開顯示，作為作業可以接受，但可以在文件裡註明這是已知限制。
-
-另外想確認一下：「和兩人協作」是指你加上另外兩位，總共三人，對嗎？確認架構後，我再依照人數提出分工與 GitHub 流程（分支策略、PR 審查、Issue 對應 Use Case）。
+資料庫沒有活動時，會建立 3 筆活動與 3 筆報名，涵蓋可報名、已額滿與已截止的情況；若已有活動資料，則略過建立。執行後重新整理首頁即可查看。
