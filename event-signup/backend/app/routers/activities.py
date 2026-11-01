@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..models import Activity
-from ..schemas import ActivityCreate, ActivityOut
+from ..schemas import ActivityCreate, ActivityOut, ActivityPinUpdate
 
 router = APIRouter(prefix="/api/activities", tags=["活動"])
 
@@ -29,10 +29,11 @@ def create_activity(data: ActivityCreate, db: Session = Depends(get_db)):
 
 @router.get("", response_model=list[ActivityOut])
 def list_activities(open: bool = False, db: Session = Depends(get_db)):
-    """UC2 列出活動；open=true 時只列出可報名的活動"""
+    """UC2 列出活動；釘選最高優先，open=true 時仍保留釘選活動"""
     activities = db.scalars(select(Activity).order_by(Activity.event_time)).all()
     if open:
-        activities = [a for a in activities if a.is_open]
+        activities = [a for a in activities if a.is_open or a.is_pinned]
+    activities.sort(key=lambda a: (not a.is_pinned, not a.is_open))
     return activities
 
 
@@ -40,3 +41,13 @@ def list_activities(open: bool = False, db: Session = Depends(get_db)):
 def get_activity(activity_id: int, db: Session = Depends(get_db)):
     """UC3 報名表上方顯示的活動資訊"""
     return get_activity_or_404(activity_id, db)
+
+
+@router.patch("/{activity_id}/pin", response_model=ActivityOut)
+def pin_activity(activity_id: int, data: ActivityPinUpdate, db: Session = Depends(get_db)):
+    """保存活動釘選狀態。"""
+    activity = get_activity_or_404(activity_id, db)
+    activity.is_pinned = data.is_pinned
+    db.commit()
+    db.refresh(activity)
+    return activity

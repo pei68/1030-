@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>報名清單｜活動報名平台</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20261101-cream-restored">
 </head>
 <body>
   <header><div class="inner"><a class="site-name" href="index.html">活動報名平台</a><a class="button" href="create.html">新增活動</a></div></header>
   <main>
     <h1>報名清單：<span id="activity-title"></span></h1>
     <p id="registration-count"></p>
+    <label class="pin-option"><input type="checkbox" id="activity-pin" disabled> 釘選此活動 </label>
     <div id="message" class="message" hidden></div>
     <div class="table-wrap">
       <table>
@@ -20,7 +21,7 @@
     </div>
     <p><a href="index.html">回活動清單</a></p>
   </main>
-  <script src="js/api.js"></script>
-  <script src="js/registrations.js"></script>
+  <script src="js/api.js?v=20261101-pin"></script>
+  <script src="js/registrations.js?v=20261101-pin"></script>
 </body>
 </html>
